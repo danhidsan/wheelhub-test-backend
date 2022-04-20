@@ -1,0 +1,64 @@
+### create user (correct payload)
+POST http://localhost:8080/create
+Content-Type: application/json
+
+{
+  "user": "user1",
+  "password": "user1Password.",
+  "hint": "User 1 hint"
+}
+
+### create user (without hint)
+POST http://localhost:8080/create
+Content-Type: application/json
+
+{
+  "user": "user2",
+  "password": "user2Password."
+}
+
+### create user (with unnecessary attributes)
+POST http://localhost:8080/create
+Content-Type: application/json
+
+{
+  "user": "user1",
+  "password": "user1Password.",
+  "hint": "User 1 hint",
+  "newAttr": "unnecessary"
+}
+
+
+### create user (with wrong user type)
+POST http://localhost:8080/create
+Content-Type: application/json
+
+{
+  "user": 1,
+  "password": "user3Password.",
+  "hint": "User 3 hint"
+}
+
+### create user (with wrong password type)
+POST http://localhost:8080/create
+Content-Type: application/json
+
+{
+  "user": "user4",
+  "password": 1,
+  "hint": "User 4 hint"
+}
+
+
+### create user (with wrong hint type)
+POST http://localhost:8080/create
+Content-Type: application/json
+
+{
+  "user": "user5",
+  "password": "user5Password.",
+  "hint": 1
+}
+
+
+
