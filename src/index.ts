@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { QueryFailedError } from 'typeorm';
+import { ValidationError } from 'class-validator';
 
 import { sqliteDataSource } from './db';
 import { createUser } from './services/user';
@@ -50,6 +51,7 @@ app.post( '/create', async ( req: Request, res: Response ) => {
   } catch(error) {
     if (error instanceof QueryFailedError)
       return res.send({ status: 400, message: 'Payload incorrecto'});
+    else if (error instanceof ValidationError) res.send({ status: 400, message: 'Payload incorrecto' });
     else return res.send({ status: 500, message: 'Ha ocurrido un error inesperado' });
   }
 } );

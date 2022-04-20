@@ -1,15 +1,18 @@
 import { createHash } from 'crypto';
 import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert } from 'typeorm';
+import { IsString } from 'class-validator';
 
 @Entity('User')
 export class User {
   @PrimaryGeneratedColumn()
     id: string;
   
-  @Column()
+  @Column({ type: 'varchar' })
+  @IsString()
     user: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
+  @IsString()
     password: string;
 
   @Column({ nullable: true })
