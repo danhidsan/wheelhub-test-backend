@@ -1,11 +1,12 @@
-import * as reflect from 'reflect-metadata';
+import 'reflect-metadata';
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+import { QueryFailedError } from 'typeorm';
 
 import { sqliteDataSource } from './db';
-import { User } from './entity/User';
+import { createUser } from './services/user';
 
 // establish database connection
 sqliteDataSource
@@ -41,16 +42,19 @@ const app = express();
 app.use(bodyParser.json());
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-const port = 8080; // default port to listen
 
-// define a route handler for the default home page
 app.post( '/create', async ( req: Request, res: Response ) => {
-  const user = await sqliteDataSource.getRepository(User).create(req.body);
-  const results = await sqliteDataSource.getRepository(User).save(user);
-  return res.send(results);
+  try {
+    await createUser(req.body);
+    return res.send({ status: 200, message: 'El usuario se creo correctamente' });
+  } catch(error) {
+    if (error instanceof QueryFailedError)
+      return res.send({ status: 400, message: 'Payload incorrecto'});
+    else return res.send({ status: 500, message: 'Ha ocurrido un error inesperado' });
+  }
 } );
 
 // start the Express server
-app.listen( port, () => {
-  console.log( `server started at http://localhost:${ port }` );
+app.listen( 8080, () => {
+  console.log( `server started at http://localhost:${ 8080 }` );
 } );

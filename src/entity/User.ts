@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { createHash } from 'crypto';
+import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert } from 'typeorm';
 
 @Entity('User')
 export class User {
@@ -11,6 +12,11 @@ export class User {
   @Column()
     password: string;
 
-  @Column()
+  @Column({ nullable: true })
     hint: string;
+
+  @BeforeInsert()
+  beforeInsertPassword() {
+    this.password = createHash('sha256').update(this.password).digest('base64');
+  }
 }
