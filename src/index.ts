@@ -5,6 +5,7 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { QueryFailedError } from 'typeorm';
 import { ValidationError } from 'class-validator';
+import cors from 'cors';
 
 import { sqliteDataSource } from './db';
 import { createUser } from './services/user';
@@ -35,24 +36,26 @@ const options = {
   // Paths to files containing OpenAPI definitions
   apis: ['./*.ts'],
 };
-  
+
 const swaggerSpec = swaggerJSDoc(options);
 
 const app = express();
 
 app.use(bodyParser.json());
 
+app.use(cors());
+
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.post( '/create', async ( req: Request, res: Response ) => {
   try {
     await createUser(req.body);
-    return res.send({ status: 200, message: 'El usuario se creo correctamente' });
+    return res.send({ message: 'El usuario se creo correctamente' }).status(200);
   } catch(error) {
     if (error instanceof QueryFailedError)
-      return res.send({ status: 400, message: 'Payload incorrecto'});
-    else if (error instanceof ValidationError) res.send({ status: 400, message: 'Payload incorrecto' });
-    else return res.send({ status: 500, message: 'Ha ocurrido un error inesperado' });
+      return res.send({ message: 'Payload incorrecto'}).status(400);
+    else if (error instanceof ValidationError) res.send({ message: 'Payload incorrecto' }).status(400);
+    else return res.send({ message: 'Ha ocurrido un error inesperado' }).status(500);
   }
 } );
 
